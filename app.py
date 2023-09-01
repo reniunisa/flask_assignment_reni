@@ -6,7 +6,7 @@ from io import BytesIO
 import base64
 import os
 import matplotlib.pyplot as plt
-#import seaborn as sns
+import seaborn as sns
 
 app = Flask(__name__)
 
@@ -57,8 +57,7 @@ def index():
 
     ## Bar Plot
     cat_order = df2.groupby('Category').agg({
-    'App': 'count'
-        }).rename({'Category':'Total'}, axis=1).sort_values('Total', ascending=False).head()
+    'App': 'count'}).rename({'App':'Total'}, axis=1).sort_values('Total', ascending=False).head()
     X = cat_order.index
     Y = cat_order['Total']
     my_colors = ['r','g','b','k','y','m','c']
@@ -121,22 +120,17 @@ def index():
     result3 = str(figdata_png)[2:-1]
 
     ## Buatlah sebuah plot yang menampilkan insight di dalam data 
-    #subset_data = df2.sample(n=100)  # Ambil 100 data acak
-    #correlation_matrix = subset_data[['Rating', 'Reviews', 'Installs']].corr()
-    #plt.figure(figsize=(8, 6))
-    # sns.heatmap(correlation_matrix, annot=True, cmap='coolwarm')
-    # plt.title('Correlation Heatmap: Rating, Reviews, Installs')
-    #output_folder = "hasilVisualisasi_RENI"
-    #plt.savefig(os.path.join(output_folder, 'heatmap.png'), bbox_inches="tight")
+    # Mengambil subset data untuk visualisasi agar lebih mudah dikelola
+    subset_data = df2.sample(n=100)  # Ambil 100 data acak
 
-    #Hubungan rating dan install
-    plt.scatter(df2['Rating'], df2['Installs'], alpha=0.5)
-    plt.xlabel('Rating')
-    plt.ylabel('Installs')
-    plt.title('Hubungan rating dan install')
-    #plt.savefig('rating_installs.png', bbox_inches="tight")
+    # Heatmap untuk melihat korelasi antara Rating, Reviews, dan Installs
+    correlation_matrix = subset_data[['Rating', 'Reviews', 'Installs']].corr()
+    plt.figure(figsize=(8, 6))
+    sns.heatmap(correlation_matrix, annot=True, cmap='coolwarm')
+    plt.title('Correlation Heatmap: Rating, Reviews, Installs')
+    #plt.savefig('heatmap.png', bbox_inches='tight')
     output_folder = "hasilVisualisasi_RENI"
-    plt.savefig(os.path.join(output_folder, 'rating_installs.png'), bbox_inches="tight")
+    plt.savefig(os.path.join(output_folder, 'heatmap.png'), bbox_inches="tight")
 
     figfile = BytesIO()
     plt.savefig(figfile, format='png')
